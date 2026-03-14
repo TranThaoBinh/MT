@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Minh Thư</title>
+
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+            background: radial-gradient(circle at center, #ff7aa2, #8a2be2, #050014);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            font-family: cursive;
+        }
+        /* sao */
+        
+        .star {
+            position: absolute;
+            width: 3px;
+            height: 3px;
+            background: white;
+            border-radius: 50%;
+            animation: twinkle 3s infinite;
+        }
+        
+        @keyframes twinkle {
+            0%,
+            100% {
+                opacity: 0.2
+            }
+            50% {
+                opacity: 1
+            }
+        }
+        /* hoa */
+        
+        .petal {
+            position: fixed;
+            top: -20px;
+            font-size: 22px;
+            animation: fall linear infinite;
+            pointer-events: none;
+        }
+        
+        @keyframes fall {
+            0% {
+                transform: translateY(-20px) rotate(0deg)
+            }
+            100% {
+                transform: translateY(110vh) rotate(360deg)
+            }
+        }
+        /* khung ảnh */
+        
+        #photoContainer {
+            position: relative;
+            width: 90vw;
+            max-width: 420px;
+            height: 65vh;
+            perspective: 2000px;
+        }
+        /* ảnh */
+        
+        .photo {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 25px;
+            box-shadow: 0 40px 100px rgba(0, 0, 0, 0.8);
+            transform: translateY(130vh) scale(0.6);
+            filter: blur(10px);
+            transition: transform 4s ease, filter 4s ease;
+            transform-origin: right center;
+        }
+        /* hiện */
+        
+        .show {
+            transform: translateY(0) scale(1);
+            filter: blur(0);
+        }
+        /* lật */
+        
+        .flip {
+            animation: flip 3s forwards;
+        }
+        
+        @keyframes flip {
+            0% {
+                transform: rotateY(0deg)
+            }
+            100% {
+                transform: rotateY(180deg)
+            }
+        }
+        /* vòng tròn rất lớn */
+        
+        #circle {
+            position: absolute;
+            width: 800px;
+            height: 800px;
+            display: none;
+            animation: spin 35s linear infinite;
+        }
+        
+        .circleImg {
+            position: absolute;
+            width: 150px;
+            height: 150px;
+            border-radius: 20px;
+            object-fit: cover;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.7);
+            transition: all 2s ease;
+        }
+        /* xoay */
+        
+        @keyframes spin {
+            from {
+                transform: rotate(0deg)
+            }
+            to {
+                transform: rotate(360deg)
+            }
+        }
+        /* lời chúc */
+        
+        #wish {
+            position: absolute;
+            font-size: 50px;
+            color: white;
+            text-align: center;
+            display: none;
+            text-shadow: 0 0 20px white, 0 0 40px pink, 0 0 60px red;
+            animation: fade 4s;
+        }
+        
+        @keyframes fade {
+            from {
+                opacity: 0
+            }
+            to {
+                opacity: 1
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <audio id="music" loop>
+<source src="music.mp3">
+</audio>
+
+    <div id="photoContainer"></div>
+    <div id="circle"></div>
+
+    <div id="wish">
+        💖 Chúc bà luôn xinh đẹp 💖<br>
+    </div>
+
+    <script>
+        /* nhạc */
+        /* phát nhạc */
+
+        let music = document.getElementById("music");
+
+        document.body.addEventListener("click", () => {
+
+            if (!music.paused) return;
+
+            music.volume = 0;
+            music.play();
+
+            let fade = setInterval(() => {
+
+                if (music.volume < 1) {
+                    music.volume += 0.02;
+                } else {
+                    clearInterval(fade);
+                }
+
+            }, 200);
+
+        });
+
+        /* sao */
+        for (let i = 0; i < 150; i++) {
+
+            let star = document.createElement("div")
+            star.className = "star"
+
+            star.style.left = Math.random() * 100 + "vw"
+            star.style.top = Math.random() * 100 + "vh"
+
+            star.style.animationDuration = (1 + Math.random() * 3) + "s"
+
+            document.body.appendChild(star)
+
+        }
+
+        /* hoa */
+        function createPetal() {
+
+            let p = document.createElement("div")
+            p.className = "petal"
+            p.innerHTML = "🌸"
+
+            p.style.left = Math.random() * 100 + "vw"
+            p.style.fontSize = (18 + Math.random() * 30) + "px"
+            p.style.animationDuration = (6 + Math.random() * 6) + "s"
+
+            document.body.appendChild(p)
+
+            setTimeout(() => p.remove(), 12000)
+
+        }
+
+        setInterval(createPetal, 200)
+
+        /* ảnh */
+        let images = [
+            "images/img1.jpg",
+            "images/img2.jpg",
+            "images/img3.jpg",
+            "images/img4.jpg",
+            "images/img5.jpg",
+            "images/img6.jpg"
+        ]
+
+        let container = document.getElementById("photoContainer")
+        let photos = []
+
+        images.forEach(src => {
+
+            let img = document.createElement("img")
+            img.src = src
+            img.className = "photo"
+
+            container.appendChild(img)
+            photos.push(img)
+
+        })
+
+        /* nổi */
+        setTimeout(() => {
+
+            photos.forEach((img, i) => {
+
+                setTimeout(() => {
+                    img.classList.add("show")
+                }, i * 900)
+
+            })
+
+        }, 500)
+
+        /* lật */
+        setTimeout(startFlip, 10000)
+
+        let index = photos.length - 1
+
+        function startFlip() {
+
+            if (index < photos.length - 1) {
+                photos[index + 1].style.display = "none"
+            }
+
+            if (index >= 0) {
+
+                photos[index].classList.add("flip")
+
+                setTimeout(() => {
+                    index--
+                    startFlip()
+                }, 3500)
+
+            } else {
+
+                container.style.display = "none"
+                createCircle()
+
+            }
+
+        }
+
+        /* vòng tròn lớn */
+        function createCircle() {
+
+            let circle = document.getElementById("circle")
+            circle.style.display = "block"
+
+            let radius = 330
+
+            images.forEach((src, i) => {
+
+                let img = document.createElement("img")
+                img.src = src
+                img.className = "circleImg"
+
+                img.style.left = "-200px"
+                img.style.top = "400px"
+
+                circle.appendChild(img)
+
+                setTimeout(() => {
+
+                    let angle = (i / images.length) * 2 * Math.PI
+
+                    let x = radius * Math.cos(angle) + 400
+                    let y = radius * Math.sin(angle) + 400
+
+                    img.style.left = x + "px"
+                    img.style.top = y + "px"
+
+                }, 600 + i * 400)
+
+            })
+
+            setTimeout(() => {
+                document.getElementById("wish").style.display = "block"
+            }, 4500)
+
+        }
+    </script>
+
+</body>
+
+</html>
